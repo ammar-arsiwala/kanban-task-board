@@ -26,7 +26,7 @@ const KanbanBoard = () => {
     const [error, setError] = useState('');
     const [activeTask, setActiveTask] = useState(null);
 
-    // Configure sensors for drag and drop
+    // Pointers for 
     const sensors = useSensors(
         useSensor(PointerSensor, {
             activationConstraint: {
@@ -38,14 +38,13 @@ const KanbanBoard = () => {
         })
     );
 
-    // Column configuration as per NYI document
     const columns = [
         { id: 'To Do', title: 'To Do' },
         { id: 'In Progress', title: 'In Progress' },
         { id: 'Done', title: 'Done' }
     ];
 
-    // Load tasks on component mount
+    // Zustand also applicable, will check if required
     useEffect(() => {
         fetchTasks();
     }, []);
@@ -57,7 +56,7 @@ const KanbanBoard = () => {
             const response = await taskAPI.getAllTasks();
             const tasksWithPositions = (response.tasks || []).map((task, index) => ({
                 ...task,
-                position: task.position ?? index // Ensure every task has a position
+                position: task.position ?? index // Check Postion of each task and ensure it has a value corresponding to it
             }));
             setTasks(tasksWithPositions);
             setError('');
@@ -69,7 +68,7 @@ const KanbanBoard = () => {
         }
     };
 
-    // Handle task creation
+    // Handle creation
     const handleCreateTask = async (taskData) => {
         try {
             // Calculate position for new task (last in the column)
@@ -94,7 +93,7 @@ const KanbanBoard = () => {
         }
     };
 
-    // Handle task editing
+    // Handle editing
     const handleEditTask = async (taskId, taskData) => {
         try {
             const response = await taskAPI.updateTask(taskId, taskData);
@@ -108,7 +107,7 @@ const KanbanBoard = () => {
         }
     };
 
-    // Handle task deletion
+    // Handle deletion
     const handleDeleteTask = async (taskId) => {
         if (window.confirm('Are you sure you want to delete this task?')) {
             try {
@@ -140,7 +139,6 @@ const KanbanBoard = () => {
         const activeId = active.id;
         const overId = over.id;
 
-        // Find the active task
         const activeTask = tasks.find(task => task._id === activeId);
         if (!activeTask) return;
 
@@ -158,7 +156,6 @@ const KanbanBoard = () => {
             // Dropped on a column
             targetStatus = overId;
         } else {
-            // Dropped on another task - find the task's column
             const targetTask = tasks.find(task => task._id === overId);
             if (targetTask) {
                 targetStatus = targetTask.status;
@@ -172,7 +169,7 @@ const KanbanBoard = () => {
                 const tasksInTargetColumn = tasks.filter(t => t.status === targetStatus && t._id !== activeId);
                 const newPosition = tasksInTargetColumn.length;
 
-                // Update task locally
+                // Update task 
                 const updatedTask = {
                     ...activeTask,
                     status: targetStatus,
@@ -198,7 +195,7 @@ const KanbanBoard = () => {
                 fetchTasks();
             }
         } 
-        // Handle reordering within the same column
+        // reording withing same col:-
         else if (activeId !== overId) {
             const tasksInColumn = getTasksByStatus(activeStatus);
             const activeIndex = tasksInColumn.findIndex(task => task._id === activeId);
@@ -206,10 +203,10 @@ const KanbanBoard = () => {
 
             if (activeIndex !== -1 && targetIndex !== -1 && activeIndex !== targetIndex) {
                 try {
-                    // Create reordered array
+                    // Create updated  array
                     const reorderedTasks = arrayMove(tasksInColumn, activeIndex, targetIndex);
                     
-                    // Update positions for all tasks in the reordered array
+                    // Update positions for all tasks in  updated array
                     const updatedTasksInColumn = reorderedTasks.map((task, index) => ({
                         ...task,
                         position: index
@@ -221,12 +218,12 @@ const KanbanBoard = () => {
                         return [...otherTasks, ...updatedTasksInColumn];
                     });
 
-                    // Update position on server for the moved task
+                    // Update position for any task that has changed position
                     await taskAPI.updateTask(activeId, {
                         position: targetIndex
                     });
 
-                    setError('');
+                    setError('911');
                 } catch (error) {
                     console.error('Failed to reorder task:', error);
                     setError('Failed to reorder task. Please try again.');

@@ -1,7 +1,7 @@
 // client/src/services/api.js
 import axios from 'axios';
 
-// Create axios instance with base configuration
+// Create axios instance with server
 const API = axios.create({
     baseURL: process.env.REACT_APP_API_URL || 'http://localhost:8000/api',
     headers: {
@@ -12,10 +12,10 @@ const API = axios.create({
 // Request interceptor to add JWT token to all requests
 API.interceptors.request.use(
     (config) => {
-        // Get token from localStorage
+
         const token = localStorage.getItem('kanban_token');
 
-        // If token exists, add it to Authorization header
+        // Make bearer token 
         if (token) {
             config.headers.Authorization = `Bearer ${token}`;
         }
@@ -27,7 +27,7 @@ API.interceptors.request.use(
     }
 );
 
-// Response interceptor to handle token expiration
+// Response interceptor 
 API.interceptors.response.use(
     (response) => {
         return response;
@@ -35,11 +35,11 @@ API.interceptors.response.use(
     (error) => {
         // If token is expired or invalid, redirect to login
         if (error.response?.status === 401) {
-            // Remove invalid token
+     
             localStorage.removeItem('kanban_token');
             localStorage.removeItem('kanban_user');
 
-            // Redirect to login page (you can customize this)
+            // Redirect to login page 
             window.location.href = '/login';
         }
 
@@ -54,7 +54,6 @@ export const authAPI = {
         try {
             const response = await API.post('/auth/register', userData);
 
-            // If registration successful, store token and user info
             if (response.data.success) {
                 localStorage.setItem('kanban_token', response.data.token);
                 localStorage.setItem('kanban_user', JSON.stringify(response.data.user));
@@ -83,9 +82,8 @@ export const authAPI = {
         }
     },
 
-    // Logout user
     logout: () => {
-        // Remove token and user info from localStorage
+        // Remove token and user 
         localStorage.removeItem('kanban_token');
         localStorage.removeItem('kanban_user');
 
@@ -93,7 +91,6 @@ export const authAPI = {
         window.location.href = '/login';
     },
 
-    // Get current user info
     getCurrentUser: async () => {
         try {
             const response = await API.get('/auth/me');
@@ -103,22 +100,22 @@ export const authAPI = {
         }
     },
 
-    // Check if user is authenticated
+
     isAuthenticated: () => {
         const token = localStorage.getItem('kanban_token');
         return !!token; // Returns true if token exists, false otherwise
     },
 
-    // Get stored user info
+
     getStoredUser: () => {
         const user = localStorage.getItem('kanban_user');
         return user ? JSON.parse(user) : null;
     }
 };
 
-// Task API methods (for future use)
+// Task API methods 
 export const taskAPI = {
-    // Get all tasks
+ 
     getAllTasks: async () => {
         try {
             const response = await API.get('/tasks');
@@ -128,7 +125,6 @@ export const taskAPI = {
         }
     },
 
-    // Create new task
     createTask: async (taskData) => {
         try {
             const response = await API.post('/tasks', taskData);
@@ -138,7 +134,7 @@ export const taskAPI = {
         }
     },
 
-    // Update task
+
     updateTask: async (taskId, taskData) => {
         try {
             console.log('Updating task:', taskId, 'with data:', taskData);
@@ -159,7 +155,7 @@ export const taskAPI = {
             throw error.response?.data || { message: 'Failed to update task' };
         }
     },
-    // Delete task
+
     deleteTask: async (taskId) => {
         try {
             const response = await API.delete(`/tasks/${taskId}`);

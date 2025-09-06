@@ -19,18 +19,16 @@ const Column = ({
         description: ''
     });
 
-    // Set up droppable area for this column
     const { isOver, setNodeRef } = useDroppable({
         id: columnId,
     });
 
-    // Handle new task form submission
     const handleCreateTask = (e) => {
         e.preventDefault();
         if (newTask.title.trim() && newTask.description.trim()) {
             onCreateTask({
                 ...newTask,
-                status: columnId // Use column ID as status
+                status: columnId 
             });
             setNewTask({ title: '', description: '' });
             setShowCreateForm(false);
@@ -43,7 +41,7 @@ const Column = ({
         setShowCreateForm(false);
     };
 
-    // Get task IDs for SortableContext
+    // Get task IDs 
     const taskIds = tasks.map(task => task._id);
 
     const style = {
@@ -73,7 +71,7 @@ const Column = ({
                     ))}
                 </SortableContext>
 
-                {/* Add new task form */}
+                {/* Add a new task form */}
                 {showCreateForm ? (
                     <div className="task-create-form">
                         <form onSubmit={handleCreateTask}>

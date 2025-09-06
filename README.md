@@ -41,5 +41,20 @@ PORT=<your_backend_port>
 MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority
 JWT_SECRET=<your_jwt_secret>
 NODE_ENV=development
-```bash
+```
+
+## 3. Mongodb config 
+Set Up Connection URI
+MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority
+
+use Mongodb atlas
+generate cluster
+configured for test (0.0.0.0/0) on network access
+
+DB access in this format:-
+    test collection 
+        user
+        task
+
+
 Replace <port>, <username>, <password>, <cluster>, <database>, and <your_jwt_secret> with your actual values.

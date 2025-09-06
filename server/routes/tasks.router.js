@@ -4,11 +4,9 @@ const Task = require('../models/Task.models');
 const { authenticateToken } = require('../middleware/auth');
 
 const router = express.Router();
-
-// GET /tasks - Get all tasks (accessible to all users as per NYI document)
+//GET
 router.get('/',authenticateToken,async (req, res) => {
     try {
-        // Get all tasks and populate creator information
         // const tasks = await Task.find().sort({ status: 1, position: 1 });
         const tasks = await Task.find().populate().sort({ status: 1, position: 1 });
         res.json({
@@ -24,7 +22,6 @@ router.get('/',authenticateToken,async (req, res) => {
     }
 });
 
-// POST /tasks - Create a new task (authentication required)
 router.post('/', authenticateToken, async (req, res) => {
     try {
         const { title, description, status = 'To Do' } = req.body;
@@ -37,7 +34,6 @@ router.post('/', authenticateToken, async (req, res) => {
             });
         }
 
-        // Get the highest position for the given status to add new task at the end
         const highestPositionTask = await Task.findOne({ status }).sort({ position: -1 });
         const position = highestPositionTask ? highestPositionTask.position + 1 : 0;
 
@@ -47,12 +43,10 @@ router.post('/', authenticateToken, async (req, res) => {
             description,
             status,
             position,
-            createdBy: req.user._id // From auth middleware
+            createdBy: req.user._id 
         });
 
         await task.save();
-
-        // Populate the creator info before sending response
         await task.populate('createdBy', 'username email role');
 
         res.status(201).json({
@@ -77,8 +71,7 @@ router.post('/', authenticateToken, async (req, res) => {
         });
     }
 });
-
-// PUT /tasks/:id - Update task (only creator or admin as per NYI document)
+//PUT
 router.put('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
@@ -93,8 +86,7 @@ router.put('/:id', authenticateToken, async (req, res) => {
                 message: 'Task not found'
             });
         }
-
-        // Check permissions: only creator or admin can update
+        
         if (task.createdBy._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
             return res.status(403).json({
                 success: false,
@@ -136,8 +128,6 @@ router.put('/:id', authenticateToken, async (req, res) => {
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-
-        // Find the task and populate creator info if needed
         const task = await Task.findById(id).populate('createdBy', 'name email role');
 
         if (!task) {
@@ -147,7 +137,6 @@ router.get('/:id', authenticateToken, async (req, res) => {
             });
         }
 
-        // Optional: restrict access to creator or admin
         if (task.createdBy._id.toString() !== req.user._id.toString() && req.user.role !== 'admin') {
             return res.status(403).json({
                 success: false,
@@ -168,7 +157,7 @@ router.get('/:id', authenticateToken, async (req, res) => {
     }
 });
 
-// DELETE /tasks/:id - Delete task (only creator or admin)
+// DELETE 
 router.delete('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
