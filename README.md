@@ -43,18 +43,20 @@ JWT_SECRET=<your_jwt_secret>
 NODE_ENV=development
 ```
 
-## 3. Mongodb config 
-Set Up Connection URI
-MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/<database>?retryWrites=true&w=majority
+## 🗄️ MongoDB Atlas Setup
 
-use Mongodb atlas
-generate cluster
-configured for test (0.0.0.0/0) on network access
+### 1. Create a Cluster
+- Use [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) to generate a new cluster.
+- Configure it for **test** purposes.
 
-DB access in this format:-
-    test collection 
-        user
-        task
+### 2. Configure Network Access
+- Whitelist IP: `0.0.0.0/0`  
+  *(Allows access from any IP — suitable for testing, but not recommended for production)*
 
+### 3. Database Structure
+- **Database Name**: `test`
+- **Collections**:
+  - `user`
+  - `task`
 
 Replace <port>, <username>, <password>, <cluster>, <database>, and <your_jwt_secret> with your actual values.
